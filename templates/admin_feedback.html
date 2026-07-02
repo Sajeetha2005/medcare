@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedCare Admin - Feedback Reviews</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f7fc;
+      color: #1e1e4b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0060b1, #004aad);
+      color: white;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-container img {
+      height: 45px;
+      width: auto;
+      border-radius: 8px;
+    }
+
+    .logo-container h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-container small {
+      display: block;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+
+    .nav-btn {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 90%;
+      margin: 3rem auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      padding: 2.5rem;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #004aad;
+      margin-bottom: 0.5rem;
+      border-left: 5px solid #0060b1;
+      padding-left: 15px;
+    }
+
+    .page-subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 2rem;
+      padding-left: 20px;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid #e0e6f0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #4a5568;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #1e1e4b;
+    }
+
+    .user-email {
+      font-size: 0.85rem;
+      color: #718096;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .message-text {
+      color: #2d3748;
+      white-space: pre-wrap;
+    }
+
+    .timestamp-badge {
+      display: inline-block;
+      background-color: #eaf6fb;
+      color: #0060b1;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #718096;
+    }
+
+    .empty-state svg {
+      width: 60px;
+      height: 60px;
+      color: #a0aec0;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.25rem;
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      background-color: #eaf6fb;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #4a5568;
+      margin-top: auto;
+      border-top: 1px solid #d0e4ee;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1.2rem 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      main {
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+        width: 95%;
+      }
+
+      th, td {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="/static/images/logo.jpg" alt="MedCare Logo">
+      <div>
+        <h1>MedCare</h1>
+        <small>AI-Powered Healthcare</small>
+      </div>
+    </div>
+    <a href="/" class="nav-btn">← Back to Home</a>
+  </header>
+
+  <main>
+    <h2 class="page-title">Feedback Reviews Dashboard</h2>
+    <p class="page-subtitle">View and evaluate feedback submitted by MedCare users.</p>
+
+    <div class="table-container">
+      {% if feedback_list %}
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 25%;">User</th>
+            <th style="width: 55%;">Message / Review</th>
+            <th style="width: 20%;">Date Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for feedback in feedback_list %}
+          <tr>
+            <td>
+              <span class="user-name">{{ feedback.name }}</span>
+              <span class="user-email">{{ feedback.email }}</span>
+            </td>
+            <td>
+              <div class="message-text">{{ feedback.message }}</div>
+            </td>
+            <td>
+              <span class="timestamp-badge">{{ feedback.timestamp }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-1.074-.765 5.999 5.999 0 0 1 1.102-3.12C4.58 15.69 4 13.914 4 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+        </svg>
+        <h3>No Feedback Received Yet</h3>
+        <p>Submissions from the home screen form will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 MedCare. Admin Review Portal.
+  </footer>
+</body>
+</html>

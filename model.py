@@ -1,11 +1,7 @@
-import pandas as pd
-from flask import Flask, render_template, request
-import joblib
-
-app = Flask(__name__)
-
-# Load model and expected column order
-model, expected_columns = joblib.load('random_forest_model.pkl')
+"""
+Healthcare AI Model Utilities
+Handles model loading and symptom definitions
+"""
 
 # List of all symptoms used as features in the model
 all_symptoms_list = [
@@ -44,93 +40,5 @@ bp_mapping = {
     'stage1': 3,
     'stage2': 4
 }
-
-# Prediction logic
-def make_prediction(model, data):
-    symptoms = data.get('symptoms', [])
-    symptoms_vector = [1 if symptom in symptoms else 0 for symptom in all_symptoms_list]
-
-    input_data = {
-        'age': data['age'],
-        'gender': 1 if data['gender'] == 'male' else 0,
-        'alcohol': 1 if data['alcohol'] == 'yes' else 0,
-        'smoker': 1 if data['smoker'] == 'yes' else 0,
-        'blood_sugar': data['blood_sugar'],
-        'bp_range': bp_mapping.get(data['bp_range'].lower(), 1),
-        'symptoms': [s.strip().lower().replace(" ", "_") for s in request.form.getlist('symptoms')] # Ensure proper formatting
-
-    }
-
-    input_data.update(dict(zip(all_symptoms_list, symptoms_vector)))
-    df = pd.DataFrame([input_data])
-    df = df.reindex(columns=expected_columns)
-    prediction = model.predict(df)[0]
-
-    return prediction
-
-# Flask routes
-@app.route('/', methods=['GET'])
-def home():
-    return render_template('perumale.html')
-
-@app.route('/form', methods=['GET'])
-def form():
-    return render_template('questions.html')
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    form = request.form.to_dict()
-
-    # Handling blood sugar conversion
-    blood_sugar_raw = form.get('blood_sugar', '')
-    if blood_sugar_raw == '<70':
-        blood_sugar = 65
-    elif blood_sugar_raw == '70-99':
-        blood_sugar = 85
-    elif blood_sugar_raw == '100-125':
-        blood_sugar = 112
-    elif blood_sugar_raw == '>126':
-        blood_sugar = 140
-    else:
-        blood_sugar = 0
-
-    data = {
-        'age': int(form.get('age', 0)),
-        'gender': form.get('gender', '').lower(),
-        'alcohol': form.get('alcohol', '').lower(),
-        'smoker': form.get('smoker', '').lower(),
-        'blood_sugar': blood_sugar,
-        'bp_range': form.get('bp_range', ''),
-        'symptoms': [s.strip().lower().replace(" ", "_") for s in request.form.getlist('symptoms')]
-    }
-
-    prediction = make_prediction(model, data)
-
-    # Generate health impression
-    risk_factors = []
-    if data['smoker'] == 'yes':
-        risk_factors.append("Smoking")
-    if data['alcohol'] == 'yes':
-        risk_factors.append("Alcohol")
-    if data['blood_sugar'] > 140:
-        risk_factors.append("High Blood Sugar")
-    if data['bp_range'].lower() in ['stage1', 'stage2']:
-        risk_factors.append("High Blood Pressure")
-
-    if risk_factors:
-        impression = "Potential risk factors include: " + ", ".join(risk_factors)
-    else:
-        impression = "No major lifestyle risks detected."
-
-    return render_template('dashboard.html', prediction=prediction, symptoms=data['symptoms'], impression=impression)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
-
-
-
 
 

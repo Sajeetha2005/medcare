@@ -149,17 +149,67 @@
       width: 18px;
       height: 18px;
     }
+
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      border-left: 4px solid #f5c6cb;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .header img {
+      height: 40px;
+      width: auto;
+    }
+
+    .header-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #004aad;
+      margin: 0;
+    }
+
+    body {
+      padding-top: 80px;
+    }
   </style>
 </head>
 <body>
+  <div class="header">
+    <img src="/static/images/logo.jpg" alt="MedCare Logo">
+    <h1 class="header-title">MedCare</h1>
+  </div>
+
   <div class="container">
     <div class="progress-indicator" id="progressIndicator">Step 1 of 3</div>
     <h2>Health Questionnaire</h2>
+    <div class="error-message" id="errorMessage"></div>
     <form id="multiStepForm" action="/predict" method="POST">
       <!-- Step 1 -->
       <div class="step active">
         <input type="text" name="name" placeholder="Full Name" required />
-        <input type="number" name="age" placeholder="Age" required />
+        <input type="number" name="age" placeholder="Age" min="1" max="120" required />
         <select name="gender" required>
           <option value="">Select Gender</option>
           <option value="male">Male</option>
@@ -167,17 +217,17 @@
           <option value="other">Other</option>
         </select>
         <input type="email" name="email" placeholder="Email" required />
-        <select name="alcohol">
+        <select name="alcohol" required>
           <option value="">Do you consume alcohol?</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
-        <select name="smoker">
+        <select name="smoker" required>
           <option value="">Do you smoke?</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
-        <select name="blood_sugar">
+        <select name="blood_sugar" required>
           <option value="">Blood Sugar Range (mg/dL)</option>
           <option value="<70">Less than 70</option>
           <option value="70-99">70–99</option>
@@ -193,7 +243,7 @@
           <option value="stage2">Stage 2</option>
         </select><br>
 
-        <button type="button" onclick="nextStep(); window.scrollTo(0, 0);">Next</button>
+        <button type="button" onclick="goToNextStep(); window.scrollTo(0, 0);">Next</button>
       </div>
 
       <!-- Step 2 -->
@@ -208,17 +258,18 @@
         <textarea name="sleep" placeholder="Sleep pattern (In hours)"></textarea>
         <textarea name="stress" placeholder="Stress level (Low, Mid, High)"></textarea>
         <button type="button" onclick="prevStep(); window.scrollTo(0, 0);">Back</button>
-        <button type="button" onclick="nextStep(); window.scrollTo(0, 0);">Next</button>
+        <button type="button" onclick="goToNextStep(); window.scrollTo(0, 0);">Next</button>
       </div>
 
       <!-- Step 3 -->
       <div class="step">
         <label class="dropdown-label">Select your symptoms:</label>
         <div class="symptom-dropdown">
-          <div class="symptom-trigger">Hover to select symptoms</div>
+          <div class="symptom-trigger">Click to select symptoms</div>
           <div class="symptom-options" id="symptomOptions"></div>
         </div>
         <div class="selected-symptoms" id="selectedSymptoms"></div>
+        <input type="hidden" id="symptomsHidden" value="" />
 
         <div class="consent-wrapper">
           <input type="checkbox" id="consent" name="consent" required />
@@ -226,7 +277,7 @@
         </div>
 
         <button type="button" onclick="prevStep(); window.scrollTo(0, 0);">Back</button>
-        <button type="submit">Submit</button>
+        <button type="submit" onclick="syncSelectedSymptoms();">Submit</button>
       </div>
     </form>
   </div>
@@ -241,11 +292,74 @@
       progressIndicator.textContent = `Step ${index + 1} of ${steps.length}`;
     }
 
+    function validateStep(stepIndex) {
+      const currentStepElement = steps[stepIndex];
+      
+      if (stepIndex === 0) {
+        // Step 1: Basic Health Info
+        const name = currentStepElement.querySelector('input[name="name"]').value.trim();
+        const age = currentStepElement.querySelector('input[name="age"]').value.trim();
+        const gender = currentStepElement.querySelector('select[name="gender"]').value;
+        const email = currentStepElement.querySelector('input[name="email"]').value.trim();
+        const alcohol = currentStepElement.querySelector('select[name="alcohol"]').value;
+        const smoker = currentStepElement.querySelector('select[name="smoker"]').value;
+        const blood_sugar = currentStepElement.querySelector('select[name="blood_sugar"]').value;
+        const bp_range = currentStepElement.querySelector('select[name="bp_range"]').value;
+
+        if (!name) {
+          alert('❌ Please enter your Full Name');
+          return false;
+        }
+        if (!age || age < 1 || age > 150) {
+          alert('❌ Please enter a valid Age (1-150)');
+          return false;
+        }
+        if (!gender) {
+          alert('❌ Please select your Gender');
+          return false;
+        }
+        if (!email || !email.includes('@')) {
+          alert('❌ Please enter a valid Email');
+          return false;
+        }
+        if (!alcohol) {
+          alert('❌ Please answer: Do you consume alcohol?');
+          return false;
+        }
+        if (!smoker) {
+          alert('❌ Please answer: Do you smoke?');
+          return false;
+        }
+        if (!blood_sugar) {
+          alert('❌ Please select your Blood Sugar Range');
+          return false;
+        }
+        if (!bp_range) {
+          alert('❌ Please select your Blood Pressure');
+          return false;
+        }
+        return true;
+      }
+      
+      if (stepIndex === 1) {
+        // Step 2: Medical History (Optional but encourage filling)
+        return true;
+      }
+      
+      return true;
+    }
+
     function nextStep() {
       if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
+        if (validateStep(currentStep)) {
+          currentStep++;
+          showStep(currentStep);
+        }
       }
+    }
+
+    function goToNextStep() {
+      nextStep();
     }
 
     function prevStep() {
@@ -255,11 +369,16 @@
       }
     }
 
+    function syncSelectedSymptoms() {
+      // Checked symptoms are submitted automatically.
+    }
+
     const rawSymptoms = `itching skin_rash nodal_skin_eruptions continuous_sneezing shivering chills joint_pain stomach_pain acidity ulcers_on_tongue muscle_wasting vomiting burning_micturition spotting_urination fatigue weight_gain anxiety cold_hands_and_feets mood_swings weight_loss restlessness lethargy patches_in_throat irregular_sugar_level cough high_fever sunken_eyes breathlessness sweating dehydration indigestion headache yellowish_skin dark_urine nausea loss_of_appetite pain_behind_the_eyes back_pain constipation abdominal_pain diarrhoea mild_fever yellow_urine yellowing_of_eyes acute_liver_failure fluid_overload swelling_of_stomach swelled_lymph_nodes malaise blurred_and_distorted_vision phlegm throat_irritation redness_of_eyes sinus_pressure runny_nose congestion chest_pain weakness_in_limbs fast_heart_rate pain_during_bowel_movements pain_in_anal_region bloody_stool irritation_in_anus neck_pain dizziness cramps bruising obesity swollen_legs swollen_blood_vessels puffy_face_and_eyes enlarged_thyroid brittle_nails swollen_extremeties excessive_hunger extra_marital_contacts drying_and_tingling_lips slurred_speech knee_pain hip_joint_pain muscle_weakness stiff_neck swelling_joints movement_stiffness spinning_movements loss_of_balance unsteadiness weakness_of_one_body_side loss_of_smell bladder_discomfort foul_smell_of_urine continuous_feel_of_urine passage_of_gases internal_itching toxic_look_(typhos) depression irritability muscle_pain altered_sensorium red_spots_over_body belly_pain abnormal_menstruation dischromic_patches watering_from_eyes increased_appetite polyuria family_history mucoid_sputum rusty_sputum lack_of_concentration visual_disturbances receiving_blood_transfusion receiving_unsterile_injections coma stomach_bleeding distention_of_abdomen history_of_alcohol_consumption fluid_overload blood_in_sputum prominent_veins_on_calf palpitations painful_walking pus_filled_pimples blackheads scurring skin_peeling silver_like_dusting small_dents_in_nails inflammatory_nails blister red_sore_around_nose yellow_crust_ooze prognosis`;
 
     const symptomList = rawSymptoms.split(/\s+/);
     const optionsContainer = document.getElementById('symptomOptions');
     const selectedSymptomsDiv = document.getElementById('selectedSymptoms');
+    const errorMessageDiv = document.getElementById('errorMessage');
     const selected = new Set();
 
     symptomList.forEach(symptom => {
@@ -272,10 +391,37 @@
       input.onchange = () => {
         input.checked ? selected.add(pretty) : selected.delete(pretty);
         selectedSymptomsDiv.textContent = Array.from(selected).join(', ');
+        errorMessageDiv.classList.remove('show');
       };
       label.appendChild(input);
       label.appendChild(document.createTextNode(' ' + pretty));
       optionsContainer.appendChild(label);
+    });
+
+    // Form submission validation
+    document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+      // Check if at least one symptom is selected
+      const selectedCheckboxes = document.querySelectorAll('input[name="symptoms[]"]:checked');
+      if (selectedCheckboxes.length === 0) {
+        e.preventDefault();
+        errorMessageDiv.textContent = '❌ Please select at least one symptom';
+        errorMessageDiv.classList.add('show');
+        window.scrollTo(0, 0);
+        return false;
+      }
+
+      // Check if consent is checked
+      const consentCheckbox = document.getElementById('consent');
+      if (!consentCheckbox.checked) {
+        e.preventDefault();
+        errorMessageDiv.textContent = '❌ Please accept the consent to proceed';
+        errorMessageDiv.classList.add('show');
+        window.scrollTo(0, 0);
+        return false;
+      }
+
+      // All validations passed, form will submit
+      return true;
     });
   </script>
 </body>

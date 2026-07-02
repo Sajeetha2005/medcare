@@ -181,15 +181,213 @@
         align-items: center;
       }
     }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Additional Sections styling */
+    .section-title {
+      font-size: 2.2rem;
+      color: #004aad;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background-color: #0060b1;
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+
+    .info-section {
+      padding: 5rem 3rem;
+      background-color: #ffffff;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .info-section.alt-bg {
+      background-color: #f8fafd;
+    }
+
+    .about-container {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.8;
+      font-size: 1.1rem;
+      color: #4a5568;
+    }
+
+    .about-container p {
+      margin-bottom: 1.5rem;
+    }
+
+    .about-highlight {
+      background-color: #eaf6fb;
+      border-left: 4px solid #0060b1;
+      padding: 1.5rem;
+      border-radius: 0 8px 8px 0;
+      text-align: left;
+      margin-top: 2rem;
+      font-size: 1rem;
+    }
+
+    /* Workflow Styles */
+    .workflow-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      max-width: 1000px;
+      margin: 2rem auto 0;
+    }
+
+    .workflow-step {
+      flex: 1 1 280px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .workflow-step:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background-color: #004aad;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .workflow-step h3 {
+      font-size: 1.25rem;
+      color: #004aad;
+      margin-bottom: 1rem;
+    }
+
+    .workflow-step p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* Feedback Form Styles */
+    .feedback-container {
+      max-width: 600px;
+      margin: 2rem auto 0;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid #edf2f7;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e1e4b;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #004aad;
+      box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.15);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #004aad;
+      color: white;
+      border: none;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #002f6c;
+      transform: translateY(-1px);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: none;
+      text-align: left;
+    }
+
+    .alert-success {
+      background-color: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-danger {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">MEDCARE</div>
+    <div class="logo">
+      <img src="/static/images/logo.jpg" alt="MedCare Logo" style="height: 45px; width: auto; margin-right: 10px;">
+      MEDCARE
+    </div>
     <nav>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Contact</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#feedback">Feedback</a>
     </nav>
   </header>
 
@@ -204,24 +402,128 @@
     </div>
   </section>
 
-  <section class="features-section">
-    <div class="card">
-      <h3>Symptom Checker</h3>
-      <p>Input your symptoms to get instant, AI-powered predictions and possible diagnosis options.</p>
+  <!-- About Section -->
+  <section id="about" class="info-section">
+    <div class="about-container">
+      <h2 class="section-title">About MedCare</h2>
+      <p>MedCare is an AI-powered diagnostic helper that aims to make preliminary health assessments accessible, instant, and private. Under the hood, the system uses a local <strong>Random Forest Classifier</strong> trained on clinical data mapping combinations of 130+ symptoms to corresponding medical prognoses.</p>
+      <p>We leverage client-side execution parameters combined with machine learning models to supply immediate confidence scores and risk factor breakdowns.</p>
+      
+      <div class="about-highlight">
+        <strong>🔒 Privacy-First Storage Commitment</strong><br>
+        Your personal details and selected symptoms are processed strictly in-memory during the query cycle. <strong>We do not store your medical data or diagnostic history in any database or disk log.</strong> Only general application feedback is stored in our database, keeping your health assessments 100% anonymous and private.
+      </div>
     </div>
-    <div class="card">
-      <h3>Smart Insights</h3>
-      <p>Understand trends in your health and lifestyle based on data you provide.</p>
+  </section>
+
+  <!-- Services / Usage Section -->
+  <section id="services" class="info-section alt-bg">
+    <h2 class="section-title">App Usage & Services</h2>
+    <div class="workflow-container">
+      <div class="workflow-step">
+        <div class="step-number">1</div>
+        <h3>Enter Profile Details</h3>
+        <p>Input basic demographic indicators such as age, gender, and general lifestyle habits (smoking status, alcohol consumption, blood sugar levels).</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">2</div>
+        <h3>Select Symptoms</h3>
+        <p>Search and select active symptoms from our comprehensive checkboxes. You must select at least one symptom to trigger a prediction.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">3</div>
+        <h3>Get AI Report</h3>
+        <p>Instantly receive your preliminary diagnosis, prediction confidence levels, and an interactive risk factor breakdown pie chart.</p>
+      </div>
     </div>
-    <div class="card">
-      <h3>Personal Guidance</h3>
-      <p>Receive intelligent suggestions and next steps tailored to your health profile.</p>
+  </section>
+
+  <!-- Feedback Section -->
+  <section id="feedback" class="info-section" style="text-align: center;">
+    <h2 class="section-title">User Reviews & Feedback</h2>
+    <p style="color: #666; margin-bottom: 2rem;">We'd love to hear your thoughts and suggestions to improve MedCare!</p>
+    
+    <div class="feedback-container">
+      <div id="alertSuccess" class="alert alert-success"></div>
+      <div id="alertDanger" class="alert alert-danger"></div>
+      
+      <form id="feedbackForm">
+        <div class="form-group">
+          <label for="feedbackName">Full Name</label>
+          <input type="text" id="feedbackName" class="form-control" placeholder="Your Name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="feedbackEmail">Email Address</label>
+          <input type="email" id="feedbackEmail" class="form-control" placeholder="yourname@example.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="feedbackMessage">Review / Message</label>
+          <textarea id="feedbackMessage" class="form-control" placeholder="Write your review here..." required></textarea>
+        </div>
+        
+        <button type="submit" id="feedbackSubmitBtn" class="submit-btn">Send Review</button>
+      </form>
     </div>
   </section>
 
   <footer>
-    &copy; 2025 MedCare. All Rights Reserved.
+    <p>&copy; 2025 MedCare. All Rights Reserved.</p>
+    <p style="margin-top: 0.6rem; font-size: 0.9rem;">
+      <a href="/admin/feedback" style="color: #004aad; text-decoration: none; font-weight: 600; transition: color 0.2s;" onmouseover="this.style.color='#002f6c'" onmouseout="this.style.color='#004aad'">Admin Review Board</a>
+    </p>
   </footer>
+
+  <script>
+    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const successDiv = document.getElementById('alertSuccess');
+      const dangerDiv = document.getElementById('alertDanger');
+      const submitBtn = document.getElementById('feedbackSubmitBtn');
+      
+      successDiv.style.display = 'none';
+      dangerDiv.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Storing feedback...';
+      
+      const payload = {
+        name: document.getElementById('feedbackName').value,
+        email: document.getElementById('feedbackEmail').value,
+        message: document.getElementById('feedbackMessage').value
+      };
+      
+      fetch('/submit_feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json().then(data => ({ status: response.status, body: data })))
+      .then(res => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Review';
+        
+        if (res.status === 200) {
+          successDiv.textContent = '✓ ' + res.body.message;
+          successDiv.style.display = 'block';
+          document.getElementById('feedbackForm').reset();
+        } else {
+          dangerDiv.textContent = '✗ ' + (res.body.message || 'Error occurred');
+          dangerDiv.style.display = 'block';
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Review';
+        dangerDiv.textContent = '✗ Failed to submit feedback. Check server connection.';
+        dangerDiv.style.display = 'block';
+        console.error(err);
+      });
+    });
+  </script>
 </body>
 </html>
 

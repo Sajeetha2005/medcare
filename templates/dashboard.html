@@ -1,212 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Doctor Dashboard</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background-color: #f7f9fc;
-      color: #333;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedCare Dashboard - Results</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f7f9fc;
+  color: #333;
+}
 
-    .navbar {
-      background: linear-gradient(135deg, #0060b1, #004aad);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+.navbar {
+  background: linear-gradient(135deg, #0060b1, #004aad);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
 
-    .navbar h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-    }
+.navbar h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
 
-    .dashboard-container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
+.navbar small {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+}
 
-    .title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #004aad;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      letter-spacing: 1px;
-    }
+.dashboard-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
 
-    .summary-cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #004aad;
+  margin-bottom: 2rem;
+  text-align: center;
+}
 
-    .card {
-      flex: 1;
-      min-width: 250px;
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+.error-banner {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border-left: 4px solid #f5c6cb;
+}
 
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-    }
+.summary-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
 
-    .card h3 {
-      color: #6f92ff;
-      font-size: 1.2rem;
-      margin-bottom: 0.75rem;
-    }
+.card {
+  flex: 1;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  border-top: 4px solid #0060b1;
+}
 
-    .card p {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #333;
-      margin: 0;
-    }
+.card h3 {
+  color: #004aad;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-    .main-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      margin-top: 2rem;
-      justify-content: center;
-    }
+.card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0060b1;
+  margin: 0;
+}
 
-    .prediction {
-      flex: 1;
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.75rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
+.progress {
+  width: 100%;
+  height: 30px;
+  background-color: #e0e0e0;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
 
-    .prediction:hover {
-      transform: translateY(-10px);
-    }
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0060b1, #00d4ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: width 0.3s ease;
+}
 
-    .prediction h3 {
-      color: #004aad;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
+.risk-level {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-    .result {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #6f92ff;
-      margin: 1.5rem 0;
-      text-align: center;
-    }
-    
+.main-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
 
-    .actions {
-      margin-top: 2rem;
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-    }
+.prediction {
+  flex: 1;
+  min-width: 350px;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
-    .button {
-      background-color: #004aad;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
+.prediction h3 {
+  color: #004aad;
+  text-align: center;
+  margin-top: 0;
+}
 
-    .button:hover {
-      background-color: #00337a;
-      transform: translateY(-5px);
-    }
+.result {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #0060b1;
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f0f7ff;
+  border-radius: 10px;
+}
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .summary-cards {
-        flex-direction: column;
-      }
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
 
-      .card {
-        width: 100%;
-        margin-bottom: 1rem;
-      }
+.button {
+  background-color: #004aad;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
 
-      .main-section {
-        flex-direction: column;
-        align-items: center;
-      }
+.button:hover {
+  background-color: #00337a;
+}
 
-      .prediction {
-        width: 100%;
-      }
-    }
-  </style>
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.risk-factors-list {
+  text-align: left;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.risk-factors-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.risk-factors-list li:last-child {
+  border-bottom: none;
+}
+
+.disclaimer {
+  margin-top: 30px;
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  color: #856404;
+  border-left: 4px solid #ffc107;
+}
+
+@media(max-width:768px) {
+  .summary-cards,
+  .main-section {
+    flex-direction: column;
+  }
+  
+  .prediction {
+    min-width: 100%;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="navbar">
-    <h1>AI Doctor</h1>
-    <div>Dashboard</div>
+
+<div class="navbar">
+  <div style="display: flex; align-items: center; gap: 15px;">
+    <img src="/static/images/logo.jpg" alt="MedCare Logo" style="height: 50px; width: auto;">
+    <div>
+      <h1>MedCare - AI Doctor</h1>
+      <small>Healthcare Assessment Results</small>
+    </div>
   </div>
 
-  <div class="dashboard-container">
-    <div class="title">Health Assessment Summary</div>
+  <div style="text-align:right;">
+    <b>Kamaraj College of Engineering and Technology</b>
+  </div>
+</div>
 
-    <div class="summary-cards">
-      <div class="card">
-        <h3>Top Symptom</h3>
-        <p>{{ symptoms[0] if symptoms else "N/A" }}</p>
-      </div>
-      <div class="card">
-        <h3>Predicted Condition</h3>
-        <p>{{ prediction }}</p>
-      </div>
-      <div class="card">
-        <h3>Risk Level</h3>
-        <p>Moderate</p>
-      </div>
+<div class="dashboard-container">
+
+  {% if error %}
+  <div class="error-banner">
+    <strong>⚠️ Error:</strong> {{ error }}
+  </div>
+  {% endif %}
+
+  <div class="title">
+    Health Assessment Summary
+  </div>
+
+  <div class="summary-cards">
+
+    <div class="card">
+      <h3>Top Symptom</h3>
+      <p>{{ symptoms[0] if symptoms else "N/A" }}</p>
     </div>
 
-    <div class="main-section">
-      <div class="prediction">
-        <h3>AI Diagnosis</h3>
-        <div class="result">{{ prediction }}</div>
+    <div class="card">
+      <h3>Predicted Condition</h3>
+      <p>{{ prediction if prediction else "N/A" }}</p>
+    </div>
 
-        <div class="actions">
-          <a href="/questions" class="button">Try Again</a>
-          <a href="/" class="button">Home</a>
+    <div class="card">
+      <h3>Prediction Confidence</h3>
+      <div class="progress">
+        <div class="progress-bar" style="width:{{ confidence if confidence else 0 }}%">
+          {{ confidence if confidence else 0 }}%
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <h3>Risk Level</h3>
+      <p class="risk-level">
+        {{ risk_emoji if risk_emoji else '🟢' }}
+        {{ risk_level if risk_level else 'Low' }}
+      </p>
+    </div>
+
   </div>
+
+  <div class="main-section">
+
+    <div class="prediction">
+      <h3>🩺 AI Diagnosis</h3>
+
+      <div class="result">
+        {{ prediction if prediction else "Processing..." }}
+      </div>
+
+      <div class="actions">
+        <a href="/questions" class="button">Try Again</a>
+        <a href="/" class="button">Home</a>
+      </div>
+    </div>
+
+    <div class="prediction">
+      <h3>Risk Factors Analysis</h3>
+      <ul class="risk-factors-list">
+        <li><strong>🚭 Smoking:</strong> {% if smoking %}<span style="color: #d9534f; font-weight: bold;">High Risk</span>{% else %}<span style="color: #5cb85c; font-weight: bold;">Safe</span>{% endif %}</li>
+        <li><strong>🍷 Alcohol:</strong> {% if alcohol %}<span style="color: #d9534f; font-weight: bold;">High Risk</span>{% else %}<span style="color: #5cb85c; font-weight: bold;">Safe</span>{% endif %}</li>
+        <li><strong>❤️ Blood Pressure:</strong> {% if bp %}<span style="color: #f0ad4e; font-weight: bold;">Elevated</span>{% else %}<span style="color: #5cb85c; font-weight: bold;">Normal</span>{% endif %}</li>
+        <li><strong>🩸 Blood Sugar:</strong> {% if sugar %}<span style="color: #d9534f; font-weight: bold;">Elevated (>140 mg/dL)</span>{% else %}<span style="color: #5cb85c; font-weight: bold;">Normal</span>{% endif %}</li>
+      </ul>
+      <div class="chart-container">
+        <canvas id="riskChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ <strong>Disclaimer:</strong> This is an AI-assisted prediction and is NOT a replacement for professional medical advice. Please consult with a qualified healthcare provider for proper diagnosis and treatment.
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var ctx = document.getElementById('riskChart');
+    if (ctx && ctx.getContext) {
+      var chartData = [
+        parseInt('{{ smoking|default(0) }}') || 0,
+        parseInt('{{ alcohol|default(0) }}') || 0,
+        parseInt('{{ bp|default(0) }}') || 0,
+        parseInt('{{ sugar|default(0) }}') || 0
+      ];
+
+      // Only show chart if there's data
+      var hasData = chartData.some(val => val > 0);
+      
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Smoking', 'Alcohol', 'High BP', 'High Sugar'],
+          datasets: [{
+            data: hasData ? chartData : [1, 1, 1, 1],
+            backgroundColor: [
+              '#FF6B6B',
+              '#4ECDC4',
+              '#45B7D1',
+              '#FFA07A'
+            ],
+            borderColor: '#fff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Chart initialization error:', err);
+  }
+});
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
